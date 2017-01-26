@@ -27,7 +27,7 @@ public class NetworkConfigurator {
                                            double momentum, String inputActivation,
                                            List<HiddenLayerSetup> layerSetup) {
 
-        if(layerSetup == null || layerSetup.isEmpty()) {
+        if (layerSetup == null || layerSetup.isEmpty()) {
             throw new IllegalArgumentException("LayerSetup cannot be empty.");
         }
 
@@ -61,6 +61,26 @@ public class NetworkConfigurator {
         return builder.layer(layerSetup.size() + 1, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
                 .activation("identity")
                 .nIn(layerSetup.get(layerSetup.size() - 1).getHiddenNodes()).nOut(numOutputs).build())
+                .pretrain(false).backprop(true).build();
+    }
+
+    public MultiLayerConfiguration getConf(int iterations, double learningRate,
+                                           double momentum, String inputActivation,
+                                           int hiddenNodes) {
+        return new NeuralNetConfiguration.Builder()
+                .seed(seed)
+                .iterations(iterations)
+                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+                .learningRate(learningRate)
+                .weightInit(WeightInit.XAVIER)
+                .updater(Updater.NESTEROVS).momentum(momentum)
+                .list()
+                .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(hiddenNodes)
+                        .activation(inputActivation)
+                        .build())
+                .layer(1, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
+                        .activation("identity")
+                        .nIn(hiddenNodes).nOut(numOutputs).build())
                 .pretrain(false).backprop(true).build();
     }
 }

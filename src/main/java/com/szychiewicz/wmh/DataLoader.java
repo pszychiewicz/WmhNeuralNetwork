@@ -17,4 +17,8 @@ public class DataLoader {
         int[] shape = {rows, columns};
         return Nd4j.create(indArrays, shape).transpose();
     }
+
+    public INDArray loadForSquarePow(int numSamples) {
+        return Nd4j.linspace(-10, 10, numSamples).reshape(numSamples, 1);
+    }
 }
